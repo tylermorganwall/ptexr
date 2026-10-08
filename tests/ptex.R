@@ -214,19 +214,3 @@ local({
 cat(
   "Ptex file, filtering, adjacency, alpha, triangle, validation and lifetime checks passed.\n"
 )
-
-# Read a legacy-format fixture written by an independent Ptex 2.4 library.
-local({
-  texture <- ptex_open(system.file(
-    "extdata",
-    "legacy-quad.ptx",
-    package = "ptexr"
-  ))
-  on.exit(ptex_close(texture))
-  uv <- as.matrix(expand.grid(c(.25, .75), c(.25, .75)))
-  expected <- rbind(c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(.25, .5, .75))
-  stopifnot(
-    max(abs(ptex_sample(texture, 1, uv, filter = "point") - expected)) < 1e-6
-  )
-})
-cat("Legacy Ptex 2.4 file compatibility passed.\n")

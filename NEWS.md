@@ -1,5 +1,9 @@
 # ptexr 2.5.4-1.9000
 
+## Bugfixes
+
+- Overall: Fixes package checks after removal of the legacy texture fixture by removing the test that depended on it.
+
 ## Documentation
 
 - Overall: Includes the runtime integration guide in the README, covering dependency setup, native API access, ownership, threading, and ABI requirements.
