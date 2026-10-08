@@ -1,0 +1,3 @@
+R interface: Copyright 2026 Tyler Morgan-Wall (BSD-3-Clause).
+Ptex 2.5.4: Copyright Disney Enterprises, Inc. (BSD-3-Clause; see licenses/Ptex-LICENSE).
+libdeflate (statically linked from the libdeflate R package): Copyright Eric Biggers, Google LLC and contributors (MIT; see licenses/libdeflate-COPYING).

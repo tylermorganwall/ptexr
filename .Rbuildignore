@@ -1,0 +1,6 @@
+^dev$
+^README[.]Rmd$
+^.*[.]Rproj$
+^[.]git$
+^[.]github$
+^src/.*[.](o|so|dll|a)$

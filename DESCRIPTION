@@ -1,0 +1,24 @@
+Package: ptexr
+Type: Package
+Title: Per-Face Texture Mapping with a Native Runtime Interface
+Version: 2.5.4-1
+Authors@R: c(
+    person("Tyler", "Morgan-Wall", email = "tylermw@gmail.com",
+        role = c("aut", "cre", "cph"),
+        comment = c(ORCID = "0000-0002-3131-3814")),
+    person("Disney Enterprises, Inc.", role = c("aut", "cph"),
+        comment = "Ptex library"))
+Description: Reads, writes and filters per-face textures using the 'Ptex'
+    library <https://github.com/wdas/ptex>. Provides shared texture caches,
+    adjacency-aware filtering and a versioned C function table for native
+    consumers. 
+License: BSD_3_clause + file LICENSE
+Copyright: file inst/COPYRIGHTS
+URL: https://github.com/wdas/ptex
+Depends: R (>= 4.3.0)
+LinkingTo: libdeflate (>= 1.25-0)
+SystemRequirements: GNU make
+Encoding: UTF-8
+NeedsCompilation: yes
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.0.0

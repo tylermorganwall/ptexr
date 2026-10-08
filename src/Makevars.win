@@ -1,0 +1,11 @@
+PKG_CPPFLAGS = -I../inst/include -Ivendor/ptex -DPTEX_STATIC -DPTEX_VENDOR=rpackage
+PKG_CXXFLAGS = $(CXX_VISIBILITY)
+PKG_LIBS = $(shell "$(R_HOME)/bin/Rscript" --vanilla ../tools/libdeflate-libs.R)
+OBJECTS = provider.o r_api.o vendor/ptex/PtexCache.o vendor/ptex/PtexFilters.o vendor/ptex/PtexHalf.o vendor/ptex/PtexReader.o vendor/ptex/PtexSeparableFilter.o vendor/ptex/PtexSeparableKernel.o vendor/ptex/PtexTriangleFilter.o vendor/ptex/PtexTriangleKernel.o vendor/ptex/PtexUtils.o vendor/ptex/PtexWriter.o
+all: $(SHLIB)
+$(OBJECTS): ../inst/include/ptex/ptex_api.h
+provider.o r_api.o: provider.h
+vendor/ptex/%.o: vendor/ptex/%.cpp
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
+clean:
+	rm -f $(OBJECTS) $(SHLIB)
