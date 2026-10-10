@@ -4,3 +4,6 @@
 ^[.]git$
 ^[.]github$
 ^src/.*[.](o|so|dll|a)$
+
+^air\.toml$
+^.*\.Rcheck($|/)

@@ -8,8 +8,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file. -->
-
 # ptexr: per-face textures for R and native renderers
 
 `ptexr` lets you read, write, inspect, and sample Ptex textures from R. Ptex
@@ -24,7 +22,6 @@ service from C or C++.
 
 Version 2.5.4-1 packages upstream Ptex 2.5.4 and links to the static library
 provided by the CRAN package `libdeflate` (version 1.25-0 or later).
-The suffix is the R packaging revision, following glmheaders/openpbr.
 
 Install from this directory:
 
@@ -40,15 +37,15 @@ library(ptexr)
 ptex_version()
 
 # Write one quad face with a single RGB texel.
-texture_file <- tempfile(fileext = ".ptx")
-face <- array(c(0.9, 0.2, 0.05), dim = c(1, 1, 3))
+texture_file = tempfile(fileext = ".ptx")
+face = array(c(0.9, 0.2, 0.05), dim = c(1, 1, 3))
 ptex_write(texture_file, faces = list(face))
 
-cache <- ptex_cache(max_memory = 256 * 1024^2)
-texture <- ptex_open(texture_file, cache)
+cache = ptex_cache(max_memory = 256 * 1024^2)
+texture = ptex_open(texture_file, cache)
 ptex_info(texture)
 ptex_face_info(texture, face = 1)
-rgb <- ptex_sample(
+rgb = ptex_sample(
   texture,
   face = 1,
   uv = c(.5, .5),
@@ -90,7 +87,7 @@ LinkingTo: ptexr
 Obtain the API handle in R:
 
 ```{r required-runtime-api, eval=FALSE}
-api <- ptexr::ptex_api()
+api = ptexr::ptex_api()
 ```
 
 Pass the handle to your registered native entry point. Include
@@ -115,7 +112,7 @@ check availability before obtaining the handle:
 if (!requireNamespace("ptexr", quietly = TRUE)) {
   stop("Install ptexr to use Ptex textures.")
 }
-api <- ptexr::ptex_api()
+api = ptexr::ptex_api()
 ```
 
 Pass the handle to your native code as above. The [consumer fixture](dev/consumer)
@@ -211,7 +208,3 @@ sample directly in their render loop. Footprint components are signed and
 bounded to `[-1, 1]`; coordinates must be local to the chosen face. Wider
 renderer footprints must be reduced to a face-sized footprint before calling
 this interface.
-
-The runtime guide is also installed as `runtime-api.txt`. For background on
-R's native interface, see [Writing R Extensions: Linking to native routines
-in other packages](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Linking-to-native-routines-in-other-packages).
