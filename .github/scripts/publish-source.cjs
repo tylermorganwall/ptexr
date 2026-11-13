@@ -86,9 +86,12 @@ module.exports = async function publishSource({ github, context, core, directory
 
   const repositoryUrl = `${context.serverUrl}/${repo.owner}/${repo.repo}`;
   const runUrl = `${repositoryUrl}/actions/runs/${context.runId}`;
+  // Draft assets can have temporary untagged-* URLs. Publishing changes them,
+  // so link to the final tag and asset name in both the release and run summary.
+  const downloadUrl = `${repositoryUrl}/releases/download/${encodeURIComponent(tag)}/${encodeURIComponent(asset.name)}`;
   const body = [
     `Download the latest successfully built **${metadata.package} ${metadata.version}** source package from **main**:`,
-    '', `[**Download the R source tarball**](${asset.browser_download_url})`, '',
+    '', `[**Download the R source tarball**](${downloadUrl})`, '',
     `Commit: [${context.sha}](${repositoryUrl}/commit/${context.sha})`,
     `Build: [GitHub Actions run ${metadata.run_number}](${runUrl})`,
     `SHA-256: \`${checksum}\``, '',
@@ -103,7 +106,7 @@ module.exports = async function publishSource({ github, context, core, directory
   });
   await core.summary.addRaw([
     `### ${metadata.package} ${metadata.version}`, '',
-    `[Download the source tarball](${asset.browser_download_url})`, '',
+    `[Download the source tarball](${downloadUrl})`, '',
     `[Latest successful main build](${repositoryUrl}/releases/tag/${tag})`, '',
     `Branch: main · Commit: ${context.sha}`, '', `SHA-256: ${checksum}`, '',
   ].join('\n')).write();

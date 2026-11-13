@@ -21,7 +21,8 @@ function fixture(t, options = {}) {
   fs.writeFileSync(path.join(directory, path.basename(metadata.filename)), bytes);
   const calls = [];
   let branchReads = 0;
-  const asset = { id: 9, name: metadata.filename, browser_download_url: 'https://github.com/example/repo/releases/download/source-main/package.tar.gz' };
+  const assetTag = options.releaseMissing || options.existingDraft ? 'untagged-draft-id' : 'source-main';
+  const asset = { id: 9, name: metadata.filename, browser_download_url: `https://github.com/example/repo/releases/download/${assetTag}/${encodeURIComponent(metadata.filename)}` };
   const repos = {
     getBranch: async () => ({ data: { commit: { sha: ++branchReads > 1 && options.advanceDuringUpload ? 'b'.repeat(40) : options.branchSha || metadata.sha } } }),
     getReleaseByTag: async () => {
@@ -43,7 +44,7 @@ function fixture(t, options = {}) {
     if (method === repos.listReleases) return options.existingDraft ? [{ id: 5, tag_name: 'source-main', draft: true, body: 'Upload in progress.' }] : [];
     return options.existingAsset ? [asset] : [];
   } };
-  const core = { notice: message => calls.push(['notice', message]), summary: { addRaw: () => ({ write: async () => calls.push(['summary']) }) } };
+  const core = { notice: message => calls.push(['notice', message]), summary: { addRaw: text => ({ write: async () => calls.push(['summary', text]) }) } };
   const context = {
     eventName: 'push', ref: 'refs/heads/main', sha: 'a'.repeat(40), runId: 123,
     repo: { owner: 'example', repo: 'repo' }, serverUrl: 'https://github.com',
@@ -74,6 +75,36 @@ test('resumes an interrupted first draft instead of creating another', async t =
   await publishSource(args);
   assert.deepEqual(calls.map(call => call[0]), ['upload', 'download', 'update', 'summary']);
   assert.equal(calls[2][1].draft, false);
+});
+
+for (const options of [
+  { releaseMissing: true },
+  { existingDraft: true },
+  { existingDraft: true, existingAsset: true },
+]) {
+  test(`uses the published tag URL instead of a temporary draft URL ${JSON.stringify(options)}`, async t => {
+    const { args, calls } = fixture(t, options);
+    await publishSource(args);
+    const expectedUrl = 'https://github.com/example/repo/releases/download/source-main/cgltf_1.15.0-0_main_aaaaaaaa_123-1.tar.gz';
+    const body = calls.find(call => call[0] === 'update')[1].body;
+    const summary = calls.find(call => call[0] === 'summary')[1];
+    for (const text of [body, summary]) {
+      assert.ok(text.includes(`](${expectedUrl})`));
+      assert.doesNotMatch(text, /untagged-/);
+    }
+  });
+}
+
+test('encodes asset names and uses the current repository and server in download links', async t => {
+  const { args, calls } = fixture(t, {
+    releaseMissing: true,
+    metadata: { filename: 'cgltf_1.15.0+dev_main_aaaaaaaa_123-1.tar.gz' },
+    context: { serverUrl: 'https://github.example.com', repo: { owner: 'another', repo: 'package' } },
+  });
+  await publishSource(args);
+  const expectedUrl = 'https://github.example.com/another/package/releases/download/source-main/cgltf_1.15.0%2Bdev_main_aaaaaaaa_123-1.tar.gz';
+  assert.ok(calls.find(call => call[0] === 'update')[1].body.includes(`](${expectedUrl})`));
+  assert.ok(calls.find(call => call[0] === 'summary')[1].includes(`](${expectedUrl})`));
 });
 
 for (const context of [{ eventName: 'pull_request' }, { ref: 'refs/heads/feature' }]) {
