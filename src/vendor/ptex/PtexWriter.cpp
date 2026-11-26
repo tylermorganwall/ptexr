@@ -42,8 +42,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #include <algorithm>
 #include <iostream>
 #include <sstream>
-#if defined(__FreeBSD__)
+#ifndef PTEX_PLATFORM_WINDOWS
     #include <unistd.h>
+#endif
+#if defined(__FreeBSD__)
     #include <stddef.h>
 #endif
 #include <libdeflate.h>

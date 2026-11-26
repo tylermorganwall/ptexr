@@ -1,6 +1,8 @@
-# ptexr 2.5.4-1.9000
+# ptexr 2.5.4-2
 
 ## Bugfixes
+
+- Overall: Fixes source builds on Windows ARM64 and WebAssembly.
 
 - Overall: Fixes package checks after removal of the legacy texture fixture by removing the test that depended on it.
 

@@ -1,6 +1,6 @@
 PKG_CPPFLAGS = -I../inst/include -Ivendor/ptex -DPTEX_STATIC -DPTEX_VENDOR=rpackage
 PKG_CXXFLAGS = $(CXX_VISIBILITY)
-PKG_LIBS = @LIBDEFLATE_LIBS@ -pthread
+PKG_LIBS = @PTEX_LIBS@
 OBJECTS = provider.o r_api.o vendor/ptex/PtexCache.o vendor/ptex/PtexFilters.o vendor/ptex/PtexHalf.o vendor/ptex/PtexReader.o vendor/ptex/PtexSeparableFilter.o vendor/ptex/PtexSeparableKernel.o vendor/ptex/PtexTriangleFilter.o vendor/ptex/PtexTriangleKernel.o vendor/ptex/PtexUtils.o vendor/ptex/PtexWriter.o
 all: $(SHLIB)
 $(OBJECTS): ../inst/include/ptex/ptex_api.h
