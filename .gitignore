@@ -1,7 +1,20 @@
-src/*.o
-src/*.so
-src/*.dll
-src/vendor/**/*.o
+# Compiled artifacts, including development consumer builds.
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.exe
+*.dSYM/
+
+# Generated validation output and package builds.
+/tools/validation/
 *.tar.gz
 *.Rcheck/
+
+# macOS metadata.
 .DS_Store
+
+/src/Makevars
+/src/Makevars.win

@@ -1,0 +1,91 @@
+Ptex package validation — 2026-10-07
+==================================
+
+Environment: R 4.6.0, macOS Sequoia 15.7.3, Apple Silicon.
+Six compilation workers. No system R library or rayrender files were modified.
+All installations used temporary libraries.
+
+Checks performed
+----------------
+- R CMD build produces a source archive containing no .o, .so, .dll or .a files.
+- Package round trips asymmetric nonconstant face data, retaining u/v orientation
+  and channel order. All eight filters are exercised; connected red/blue faces
+  agree at their shared edge. Tests also cover alpha premultiplication, triangle
+  faces, face metadata, invalid inputs, corrupt/truncated files, serialization,
+  double close, and releasing a cache before its texture handles.
+- 64 live texture handles with a two-file cache still evict and reopen files,
+  verifying that material lifetimes do not pin file references.
+- An independent Ptex 2.4 library wrote the included legacy-format fixture;
+  this package reads all four expected RGB texels exactly.
+- A separate consumer package compiles without Ptex headers or libraries from
+  an installation (it contains only copies of the public protocol headers).
+  It checks both plain-C and C++ access and registered function-table lookup.
+  Six native threads perform 60,000 seam samples on a shared texture correctly.
+  It also tests unsupported ABI versions and error returns for invalid indices.
+- Upstream wtest, rtest, ftest and halftest all pass against the bundled objects.
+  Reader and filter output matches the upstream golden files exactly.
+- otool confirms the provider links only R and the system C/C++ libraries.
+  nm reports R_init_ptex as its sole public defined symbol. The consumer has no
+  Ptex/libdeflate dynamic dependency or unresolved Ptex symbol.
+- tools/validate.R was run end to end: installs, native consumer, upstream tests,
+  source build and ordinary R CMD check. See validation/workflow.log.
+
+Reproduce
+---------
+Install libdeflate (>= 1.25-0) into an R library visible to Rscript before
+running the current workflow. From the package root:
+
+    Rscript --vanilla tools/validate.R /private/tmp/ptexr-validation
+
+Or build and check:
+
+    R CMD build .
+    R CMD check --as-cran --no-manual ptexr_2.5.4-1.tar.gz
+
+The local verification used a temporary Makevars containing:
+    CXX = $(CXX17) $(CXX17STD)
+    SHLIB_CXXLD = $(CXX)
+    CCACHE =
+This preserves the user's configured C++17 compiler while bypassing the local
+sccache wrapper, which could not run inside the sandbox. These are test-machine
+settings, not package requirements. The package does not set CXX_STD or replace
+R's compiler/optimization flags. R_MAKEVARS_SITE, R_ENVIRON_USER and
+R_PROFILE_USER were /dev/null for CRAN-style checks; MAKEFLAGS=-j6.
+
+Limitations
+-----------
+Executed here on macOS arm64 only. Unix and Windows build files are included,
+as is a Linux/macOS/Windows CI workflow, but those remote jobs have not run.
+The PDF manual was not built (--no-manual); help files and examples were checked.
+No claim is made about full production-scene render speed or image equivalence.
+The provider is ready for renderer integration; rayrender's Ptex import/material
+lookup and source-face mapping have not been implemented by this package task.
+
+Development logs contain historical temporary paths. Compiled artifacts and
+installed test libraries are intentionally excluded from this source directory.
+
+Final source-archive check
+--------------------------
+R CMD check --as-cran --no-manual: 0 errors, 0 warnings, 1 NOTE.
+The sole NOTE is CRAN incoming review identifying a new submission.
+DESCRIPTION metadata, compiled-code checks, examples and all tests pass.
+See validation/cran-check.log for the complete final result.
+
+Static libdeflate integration — 2026-10-08
+-----------------------------------------
+Validated ptexr against CRAN libdeflate 1.25-0 on macOS arm64 with R 4.6.0.
+The dependency was built from its unmodified CRAN source archive and installed
+into a temporary library whose path contains spaces.
+
+- Package tests, legacy Ptex compatibility, all four upstream tests, and the
+  C/C++ consumer's 60,000 concurrent samples pass.
+- The README example passes with libdeflate unavailable in the runtime R library
+  paths, confirming that only the build needs the dependency installed.
+- nm reports only R_init_ptexr as a public defined symbol. otool reports no
+  dynamic dependency on libdeflate or Ptex.
+- The source archive includes tools/libdeflate-libs.R and contains no bundled
+  libdeflate sources, static archives, or compiled objects.
+- R CMD check --no-manual completes with Status: OK.
+
+Logs: /private/tmp/ptexr-static-libdeflate/validation/
+Linux and Windows builds have not been run locally.

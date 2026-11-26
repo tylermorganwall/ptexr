@@ -10,6 +10,8 @@
 
 ## Other
 
+- Overall: Resolves libdeflate linker settings during configuration and generates platform Makevars from templates.
+
 - Overall: Uses the static library supplied by CRAN package `libdeflate` (>= 1.25-0) for compression, replacing the bundled libdeflate sources. The dependency is required when building `ptexr` from source.
 - Overall: Renames the R package to `ptexr`. Load it with `library(ptexr)` and use `ptexr` in package dependencies and native runtime lookup; existing `ptex_*()` function names remain unchanged.
 

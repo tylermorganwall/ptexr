@@ -176,6 +176,7 @@ private:
  * Atomics
  */
 
+// R package: compare Windows atomic results as unsigned bit patterns.
 #ifdef PTEX_PLATFORM_WINDOWS
     #define ATOMIC_ALIGNED __declspec(align(8))
     #define ATOMIC_ADD32(x,y) (InterlockedExchangeAdd((volatile long*)(x),(long)(y)) + (y))
@@ -183,8 +184,8 @@ private:
     #define ATOMIC_SUB32(x,y) (InterlockedExchangeAdd((volatile long*)(x),-((long)(y))) - (y))
     #define ATOMIC_SUB64(x,y) (InterlockedExchangeAdd64((volatile long long*)(x),-((long long)(y))) - (y))
     #define MEM_FENCE()       MemoryBarrier()
-    #define BOOL_CMPXCH32(x,y,z) (InterlockedCompareExchange((volatile long*)(x),(long)(z),(long)(y))   == (y))
-    #define BOOL_CMPXCH64(x,y,z) (InterlockedCompareExchange64((volatile long long*)(x),(long long)(z),(long long)(y)) == (y))
+    #define BOOL_CMPXCH32(x,y,z) ((uint32_t)InterlockedCompareExchange((volatile long*)(x),(long)(z),(long)(y)) == (uint32_t)(y))
+    #define BOOL_CMPXCH64(x,y,z) ((uint64_t)InterlockedCompareExchange64((volatile long long*)(x),(long long)(z),(long long)(y)) == (uint64_t)(y))
     #ifdef NDEBUG
         #define PTEX_INLINE __forceinline
     #else

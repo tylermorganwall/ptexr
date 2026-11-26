@@ -1,0 +1,9 @@
+Package: ptexconsumer
+Title: Ptex Runtime Consumer Test
+Version: 0.0.1
+Authors@R: person("Tyler", "Morgan-Wall", email = "tylermw@gmail.com", role = c("aut", "cre"))
+Description: Tests optional Ptex runtime integration from both C and C++ without linking Ptex.
+License: BSD_3_clause + file LICENSE
+Suggests: ptexr
+Encoding: UTF-8
+NeedsCompilation: yes

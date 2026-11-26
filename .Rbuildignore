@@ -1,4 +1,4 @@
-^dev$
+^tools/(?!configure[.]R$)
 ^README[.]Rmd$
 ^.*[.]Rproj$
 ^[.]git$
@@ -7,3 +7,10 @@
 
 ^air\.toml$
 ^.*\.Rcheck($|/)
+
+^cran-comments\.md$
+
+^cran-audit\.md$
+
+^src/Makevars$
+^src/Makevars\.win$

@@ -4,7 +4,7 @@
 #' @export
 #' @examples
 #' ptex_version()
-ptex_version <- function() {
+ptex_version = function() {
   .Call(C_ptex_version)
 }
 
@@ -21,7 +21,7 @@ ptex_version <- function() {
 #' @export
 #' @examples
 #' api = ptex_api()
-ptex_api <- function() {
+ptex_api = function() {
   .Call(C_ptex_api, asNamespace("ptexr"))
 }
 
@@ -43,12 +43,12 @@ ptex_api <- function() {
 #' cache = ptex_cache(max_memory = 32 * 1024^2)
 #' ptex_cache_info(cache)
 #' ptex_close(cache)
-ptex_cache <- function(
+ptex_cache = function(
   max_files = 100L,
   max_memory = 256 * 1024^2,
   premultiply = TRUE
 ) {
-  max_files <- ptex_integer(max_files, "max_files", 1L)
+  max_files = ptex_integer(max_files, "max_files", 1L)
   stopifnot(
     is.numeric(max_memory),
     length(max_memory) == 1L,
@@ -75,7 +75,7 @@ ptex_cache <- function(
 #' @return A validated integer vector.
 #' @keywords internal
 #' @noRd
-ptex_integer <- function(x, name, minimum = 0L) {
+ptex_integer = function(x, name, minimum = 0L) {
   if (
     !is.numeric(x) ||
       anyNA(x) ||
@@ -98,7 +98,7 @@ ptex_integer <- function(x, name, minimum = 0L) {
 #' @param cache A cache from [ptex_cache()].
 #' @return A named numeric vector of memory bytes, file counts and block reads.
 #' @export
-ptex_cache_info <- function(cache) {
+ptex_cache_info = function(cache) {
   .Call(C_ptex_cache_stats, cache)
 }
 
@@ -122,9 +122,9 @@ ptex_cache_info <- function(cache) {
 #' ptex_sample(texture, face = 1, uv = c(0.5, 0.5))
 #' ptex_close(texture)
 #' unlink(file)
-ptex_open <- function(path, cache = ptex_cache()) {
+ptex_open = function(path, cache = ptex_cache()) {
   stopifnot(is.character(path), length(path) == 1L, !is.na(path))
-  path <- normalizePath(path, winslash = "/", mustWork = TRUE)
+  path = normalizePath(path, winslash = "/", mustWork = TRUE)
   .Call(C_ptex_open, enc2utf8(path), cache)
 }
 
@@ -132,7 +132,7 @@ ptex_open <- function(path, cache = ptex_cache()) {
 #' @param handle A texture or cache handle. Closing an already closed handle is safe.
 #' @return Invisibly `NULL`.
 #' @export
-ptex_close <- function(handle) {
+ptex_close = function(handle) {
   .Call(C_ptex_close, handle)
   invisible(NULL)
 }
@@ -142,12 +142,12 @@ ptex_close <- function(handle) {
 #' @return A list with mesh and data types, face and channel counts, alpha channel
 #'   (one-based, or zero for no alpha), and border modes.
 #' @export
-ptex_info <- function(texture) {
-  info <- as.list(.Call(C_ptex_info, texture))
-  info$mesh_type <- c("triangle", "quad")[[info$mesh_type + 1L]]
-  info$data_type <- c("uint8", "uint16", "half", "float")[[info$data_type + 1L]]
-  info$u_border <- c("clamp", "black", "periodic")[[info$u_border + 1L]]
-  info$v_border <- c("clamp", "black", "periodic")[[info$v_border + 1L]]
+ptex_info = function(texture) {
+  info = as.list(.Call(C_ptex_info, texture))
+  info$mesh_type = c("triangle", "quad")[[info$mesh_type + 1L]]
+  info$data_type = c("uint8", "uint16", "half", "float")[[info$data_type + 1L]]
+  info$u_border = c("clamp", "black", "periodic")[[info$u_border + 1L]]
+  info$v_border = c("clamp", "black", "periodic")[[info$v_border + 1L]]
   info
 }
 
@@ -157,8 +157,8 @@ ptex_info <- function(texture) {
 #' @return A list with width, height, adjacent face and edge indices (one-based;
 #'   zero means a boundary face), and the subface flag. Triangles use three edges.
 #' @export
-ptex_face_info <- function(texture, face) {
-  info <- .Call(C_ptex_face_info, texture, ptex_integer(face, "face", 1L))
+ptex_face_info = function(texture, face) {
+  info = .Call(C_ptex_face_info, texture, ptex_integer(face, "face", 1L))
   list(
     width = unname(info[[1L]]),
     height = unname(info[[2L]]),
@@ -203,7 +203,7 @@ ptex_face_info <- function(texture, face) {
 #'             filter = "point")
 #' ptex_close(texture)
 #' unlink(file)
-ptex_sample <- function(
+ptex_sample = function(
   texture,
   face,
   uv,
@@ -215,7 +215,7 @@ ptex_sample <- function(
   sharpness = 0,
   no_edge_blend = FALSE
 ) {
-  filters <- c(
+  filters = c(
     "point",
     "bilinear",
     "box",
@@ -225,20 +225,20 @@ ptex_sample <- function(
     "catmullrom",
     "mitchell"
   )
-  filter <- match.arg(filter, filters)
+  filter = match.arg(filter, filters)
   if (is.numeric(uv) && is.null(dim(uv))) {
-    uv <- matrix(uv, nrow = 1L)
+    uv = matrix(uv, nrow = 1L)
   }
   stopifnot(is.matrix(uv), is.numeric(uv), ncol(uv) == 2L, all(is.finite(uv)))
-  n <- nrow(uv)
-  face <- ptex_integer(face, "face", 1L)
+  n = nrow(uv)
+  face = ptex_integer(face, "face", 1L)
   if (length(face) == 1L) {
-    face <- rep(face, n)
+    face = rep(face, n)
   }
   stopifnot(length(face) == n)
   if (is.numeric(footprint) && is.null(dim(footprint))) {
     stopifnot(length(footprint) == 4L)
-    footprint <- matrix(rep(footprint, each = n), ncol = 4L)
+    footprint = matrix(rep(footprint, each = n), ncol = 4L)
   }
   stopifnot(
     is.matrix(footprint),
@@ -256,11 +256,11 @@ ptex_sample <- function(
     length(sharpness) == 1L,
     is.finite(sharpness)
   )
-  first_channel <- ptex_integer(first_channel, "first_channel", 1L)
+  first_channel = ptex_integer(first_channel, "first_channel", 1L)
   if (is.null(channels)) {
-    channels <- ptex_info(texture)$channels - first_channel + 1L
+    channels = ptex_info(texture)$channels - first_channel + 1L
   }
-  channels <- ptex_integer(channels, "channels", 1L)
+  channels = ptex_integer(channels, "channels", 1L)
   .Call(
     C_ptex_sample,
     texture,
@@ -318,7 +318,7 @@ ptex_sample <- function(
 #' ptex_sample(texture, c(1, 2), rbind(c(1, .5), c(0, .5)), footprint = c(.2, 0, 0, .2))
 #' ptex_close(texture)
 #' unlink(file)
-ptex_write <- function(
+ptex_write = function(
   path,
   faces,
   mesh_type = "quad",
@@ -327,7 +327,7 @@ ptex_write <- function(
   alpha_channel = 0L,
   overwrite = FALSE
 ) {
-  mesh_type <- match.arg(mesh_type, c("quad", "triangle"))
+  mesh_type = match.arg(mesh_type, c("quad", "triangle"))
   stopifnot(
     is.character(path),
     length(path) == 1L,
@@ -339,21 +339,21 @@ ptex_write <- function(
     length(overwrite) == 1L,
     !is.na(overwrite)
   )
-  n <- length(faces)
-  faces <- lapply(faces, function(face) {
+  n = length(faces)
+  faces = lapply(faces, function(face) {
     stopifnot(is.numeric(face), length(dim(face)) == 3L)
-    storage.mode(face) <- "double"
+    storage.mode(face) = "double"
     face
   })
-  edge_count <- if (mesh_type == "quad") 4L else 3L
+  edge_count = if (mesh_type == "quad") 4L else 3L
   if (is.null(adjacent_faces)) {
-    adjacent_faces <- matrix(0L, n, edge_count)
+    adjacent_faces = matrix(0L, n, edge_count)
   }
   if (is.null(adjacent_edges)) {
     if (any(adjacent_faces != 0L)) {
       stop("adjacent_edges is required for connected faces")
     }
-    adjacent_edges <- matrix(1L, n, edge_count)
+    adjacent_edges = matrix(1L, n, edge_count)
   }
   stopifnot(
     is.matrix(adjacent_faces),
@@ -361,20 +361,20 @@ ptex_write <- function(
     identical(dim(adjacent_faces), c(n, edge_count)),
     identical(dim(adjacent_edges), c(n, edge_count))
   )
-  neighbours <- matrix(ptex_integer(adjacent_faces, "adjacent_faces"), n)
-  edges <- matrix(ptex_integer(adjacent_edges, "adjacent_edges", 1L), n)
+  neighbours = matrix(ptex_integer(adjacent_faces, "adjacent_faces"), n)
+  edges = matrix(ptex_integer(adjacent_edges, "adjacent_edges", 1L), n)
   if (edge_count == 3L) {
-    neighbours <- cbind(neighbours, 0L)
-    edges <- cbind(edges, 1L)
+    neighbours = cbind(neighbours, 0L)
+    edges = cbind(edges, 1L)
   }
-  alpha_channel <- ptex_integer(alpha_channel, "alpha_channel")
-  directory <- normalizePath(dirname(path), winslash = "/", mustWork = TRUE)
-  path <- file.path(directory, basename(path))
+  alpha_channel = ptex_integer(alpha_channel, "alpha_channel")
+  directory = normalizePath(dirname(path), winslash = "/", mustWork = TRUE)
+  path = file.path(directory, basename(path))
   if (file.exists(path) && !overwrite) {
     stop("File already exists: ", path)
   }
   # Write alongside the destination so a failed write leaves the original intact.
-  temporary <- tempfile("ptex-", tmpdir = directory, fileext = ".ptx")
+  temporary = tempfile("ptex-", tmpdir = directory, fileext = ".ptx")
   on.exit(unlink(temporary), add = TRUE)
   .Call(
     C_ptex_write,

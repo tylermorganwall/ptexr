@@ -1,0 +1,2 @@
+useDynLib(ptexconsumer, .registration = TRUE)
+export(runtime_test)

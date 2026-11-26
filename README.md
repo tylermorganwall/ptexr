@@ -152,9 +152,11 @@ For an optional integration, such as rayimgui, add this field to
 Suggests: ptexr
 ```
 
-Copy the installed `ptex_api.h`, `ptex_r.h`, and their `LICENSE` from
-`ptexr`’s `include/ptex/` directory into your package’s `src/ptex/`
-directory. Your package can then build even when `ptexr` is absent. At
+Copy the installed `ptex_api.h` and `ptex_r.h` from `ptexr`'s `include/ptex/`
+directory into your package's `src/ptex/` directory. Preserve their copyright
+notices and BSD-3-Clause terms; the package-root `LICENSE` provides the
+copyright holder and year.
+Your package can then build even when `ptexr` is absent. At
 the R boundary, check availability before obtaining the handle:
 
 ``` r
@@ -164,8 +166,8 @@ if (!requireNamespace("ptexr", quietly = TRUE)) {
 api <- ptexr::ptex_api()
 ```
 
-Pass the handle to your native code as above. The [consumer
-fixture](dev/consumer) demonstrates this route in C and C++, including
+Pass the handle to your native code as above. The source repository includes a consumer fixture in `tools/consumer`
+that demonstrates this route in C and C++, including
 concurrent sampling.
 
 ### Native code outline
